@@ -1,5 +1,5 @@
 
-# Run "python -m examples.loadTrajectory" from source = "..../DRL-from-Trajectory/"
+# To run "DRL-from-Trajectory$ python -m examples.loadTrajectory"
 
 from Data.Trajectory.Trajectory_Random import Trajectory_Random
 
