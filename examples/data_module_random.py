@@ -1,5 +1,5 @@
 
-# To run "DRL-from-Trajectory$ python -m examples.instanciateDataModule_fromTrajectories"
+# To run "DRL-from-Trajectory$ python -m examples.data_module_random"
 
 from Data.Trajectory.Trajectory_Random import Trajectory_Random
 from Data.Trajectory.Trajectories import Trajectories
