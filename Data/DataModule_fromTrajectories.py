@@ -14,7 +14,6 @@ class TransitionDataset(Dataset):
         self.transitions = transitions
 
 
-
     def __len__(self):
         return len(self.transitions)
 
@@ -25,7 +24,8 @@ class TransitionDataset(Dataset):
         state = transition[0]
         action = transition[1]
         afterState = transition[2]
-        return [state, action], afterState
+        _input = np.concatenate([state, action])
+        return _input, afterState
 
 
 
@@ -33,16 +33,17 @@ class DataModule_fromTrajectories(pl.LightningDataModule):
 
     """ PyTorch Lightning Data Module that inputs its data from Trajectories """
 
-    def __init__(self, trainTrajectories, validTrajectories, testTrajectories):
+    def __init__(self, trainTrajectories, validTrajectories, testTrajectories, batch_size=1, shuffle=True):
         super().__init__()
         self.trainTrajectories = trainTrajectories
         self.validTrajectories = validTrajectories
         self.testTrajectories = testTrajectories
 
+        self.batch_size = batch_size
+        self.shuffle = shuffle
 
 
     def setup(self, stage: Optional[str] = None):
-        print("Setting up")
         """ Get all transitions from trajectories and format tham as Datasets """
         trainTransitions = self.trainTrajectories.getAllTransitions()
         validTransitions = self.validTrajectories.getAllTransitions()
@@ -55,14 +56,26 @@ class DataModule_fromTrajectories(pl.LightningDataModule):
 
 
     def train_dataloader(self):
-        return DataLoader(self.trainDataset)
+        return DataLoader(
+            self.trainDataset,
+            batch_size=self.batch_size,
+            shuffle=self.shuffle
+        )
 
 
 
     def val_dataloader(self):
-        return DataLoader(self.validDataset)
+        return DataLoader(
+            self.validDataset,
+            batch_size=self.batch_size,
+            shuffle=self.shuffle
+        )
 
 
 
     def test_dataloader(self):
-        return DataLoader(self.testDataset)
+        return DataLoader(
+            self.testDataset,
+            batch_size=self.batch_size,
+            shuffle=self.shuffle
+        )
