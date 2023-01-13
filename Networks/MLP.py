@@ -6,7 +6,16 @@ class MLP(torch.nn.Module):
 
     """ Basic configurable MLP """
 
-    def __init__(self, n_inputs : int = 32, n_outputs : int = 64, n_hidden : int = 3, shape : float = 1.0, dropoutRate : float = 0.75):
+    def __init__(
+        self,
+        n_inputs : int = 32, 
+        n_outputs : int = 64, 
+        n_hidden : int = 3, 
+        shape : float = 1.0, 
+        dropoutRate : float = 0.75,
+        activations : str = "relu", # "relu" or "sigmoid"
+        last_activation = torch.nn.ReLU() 
+    ):
 
         """
         <n_inputs> : Number of input features.
@@ -49,11 +58,15 @@ class MLP(torch.nn.Module):
             layerWidth = max(layerWidth, 1)
             self.layers.append(torch.nn.Linear(previousLayerWidth, layerWidth))
             self.layers.append(torch.nn.Dropout(p=dropoutRate))
-            self.layers.append(torch.nn.ReLU())
+            if (activations == "relu"):
+                self.layers.append(torch.nn.ReLU())
+            if (activations == "sigmoid"):
+                self.layers.append(torch.nn.Sigmoid())
             previousLayerWidth = layerWidth
         self.layers.append(torch.nn.Linear(previousLayerWidth, n_outputs))
         self.layers.append(torch.nn.Dropout(p=dropoutRate))
-        self.layers.append(torch.nn.ReLU())
+        if (last_activation is not None):
+            self.layers.append(last_activation)
 
         # Make all layers visible to optimizer with model.parameters()
         self.layers = torch.nn.ModuleList(self.layers)
